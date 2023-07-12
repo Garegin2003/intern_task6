@@ -1,0 +1,8 @@
+.progress {
+  width: 350px;
+  height: 20px;
+  background-color: lightgrey; }
+  .progress__item {
+    height: 100%;
+    background-color: green;
+    width: 0; }
