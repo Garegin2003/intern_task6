@@ -7,15 +7,16 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <h1>File Uploader</h1>
+    <div class="drop-area">
+        <h2 class="drop-area__title">Drag and Drop area</h2>
+        <input class="drop-area__item" type="file" multiple/>
+    </div>
     <div class="progress">
         <div class="progress__item">
 
         </div>
     </div>
-    <form>
-        <input type="file" class="file-input" multiple />
-        <button>Add</button>
-    </form>
+    <button class="upload-btn">Upload</button>
+    <script src="script.js"></script>
 </body>
 </html>
