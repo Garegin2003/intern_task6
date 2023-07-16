@@ -1,8 +1,63 @@
-.progress {
+* {
+  margin: 0;
+  padding: 0; }
+
+body {
+  background-color: #437bf5; }
+
+.content {
+  max-width: 600px;
+  margin: 200px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 10px 20px, rgba(0, 0, 0, 0.28) 0px 6px 6px;
+  background-color: #f7fff7;
+  width: 420px;
+  padding: 30px 60px;
+  border-radius: 40px; }
+
+.container__progress {
   width: 350px;
   height: 20px;
   background-color: lightgrey; }
-  .progress__item {
-    height: 100%;
-    background-color: green;
-    width: 10px; }
+
+.container__item {
+  height: 100%;
+  background-color: green;
+  width: 0;
+  margin: 50px 0; }
+
+.drop-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 2px dashed #437bf5;
+  border-radius: 40px;
+  margin: 10px 0 15px;
+  padding: 30px 50px; }
+  .drop-area__container {
+    width: 350px;
+    text-align: center; }
+    .drop-area__container label {
+      font-size: 19px; }
+  .drop-area__title {
+    font-size: 26px;
+    margin: 15px 0; }
+  .drop-area__item {
+    opacity: 0; }
+
+.upload-btn {
+  font-family: 'Montserrat';
+  background-color: #437bf5;
+  color: #f7fff7;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  margin: 10px;
+  padding: 7.5px 50px;
+  cursor: pointer; }
