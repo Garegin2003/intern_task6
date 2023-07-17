@@ -29,6 +29,9 @@ body {
   width: 0;
   margin: 50px 0; }
 
+.container__text {
+  color: #f7fff7; }
+
 .drop-area {
   display: flex;
   align-items: center;
