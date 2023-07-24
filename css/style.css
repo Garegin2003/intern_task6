@@ -27,7 +27,8 @@ body {
   height: 100%;
   background-color: green;
   width: 0;
-  margin: 50px 0; }
+  margin: 50px 0;
+  text-align: center; }
 
 .container__text {
   color: #f7fff7; }
@@ -48,9 +49,8 @@ body {
       font-size: 19px; }
   .drop-area__title {
     font-size: 26px;
-    margin: 15px 0; }
-  .drop-area__item {
-    opacity: 0; }
+    margin: 15px 0;
+    padding: 30px; }
 
 .upload-btn {
   font-family: 'Montserrat';
@@ -64,3 +64,9 @@ body {
   margin: 10px;
   padding: 7.5px 50px;
   cursor: pointer; }
+
+.completed {
+  background-color: #437bf5 !important; }
+
+.error {
+  color: #ff1f1f; }
