@@ -1,22 +1,22 @@
 const uploadBtn = document.querySelector('.upload-btn');
 const progress = document.querySelector('.container');
 const input = document.querySelector('.drop-area__item');
-let maxParallelUploads = 3;
-const files = []
+const dropArea = document.querySelector('.drop-area');
+const maxParallelUploads = 3;
+const files = [];
+const selectedFiles = [];
 
 let fileIndex = 0;
 let step = 0;
 let progressContainers = [];
 let uploadStarted = false;
-let arr = []
+let finish = 0;
 
-uploadBtn.addEventListener('click', uploadFiles);
-
-const dropArea = document.querySelector('.drop-area');
-
+uploadBtn.addEventListener('click', () => uploadFiles(input.files));
 dropArea.addEventListener('dragover', handleDragOver);
 dropArea.addEventListener('dragleave', handleDragLeave);
 dropArea.addEventListener('drop', handleDrop);
+input.addEventListener('change', handleChange);
 
 function handleDragOver(e) {
   e.preventDefault();
@@ -30,20 +30,14 @@ function handleDragLeave(e) {
 
 function handleDrop(e) {
   e.preventDefault();
+
   dropArea.classList.remove('drag-over');
-  const files = [...e.dataTransfer.files];
+  const filesDropped = e.dataTransfer.files || e.target.files;
+  selectedFiles.push(...filesDropped);
+}
 
-  const dataTransfer = new DataTransfer();
-
-  Array.from(files).forEach((file) => {
-    dataTransfer.items.add(file);
-  });
-
-  Array.from(files).forEach((file) => {
-    dataTransfer.items.add(file);
-  });
-
-  input.files = dataTransfer.files;
+function handleChange(e) {
+  selectedFiles.push(...e.target.files);
 }
 
 function createProgressContainer() {
@@ -68,84 +62,48 @@ function updateProgress(containerProgress, percent) {
   if (containerProgress) {
     const containerItem = containerProgress.querySelector('.container__item');
     const containerText = containerProgress.querySelector('.container__text');
-  
     containerItem.style.width = percent + '%';
     containerText.textContent = percent;
-  
+
     if (parseFloat(percent) === 100) {
       containerItem.classList.add('completed');
     }
   }
-
 }
 
- function uploadFiles() {
-  files.push(...input.files);
+function uploadFiles() {
+  files.push(...selectedFiles);
 
-  if (input.files.length === 0) {
-    return;
+  input.value = '';
+
+  const existingProgressContainers = document.querySelectorAll('.container__progress');
+  const numExistingContainers = existingProgressContainers.length;
+
+  for (let i = numExistingContainers; i < files.length; i++) {
+    const containerProgress = createProgressContainer();
+    progressContainers.push(containerProgress);
   }
-  input.files = null;
-  input.value = ''
-  console.log(files);
 
-
-    const existingProgressContainers = document.querySelectorAll('.container__progress');
-    const numExistingContainers = existingProgressContainers.length;
-    for (let i = numExistingContainers; i < files.length; i++) { 
-      const containerProgress = createProgressContainer();
-      progressContainers.push(containerProgress);
-      arr.push(containerProgress)
-    }
-
-
-  if (!uploadStarted) { 
-    
-    // if (arr.length >= 3) {
-    //   maxParallelUploads = 3
-    // }
-    // else if(arr.length ===2) {
-    //   maxParallelUploads = 2
-    // }
-    // else if(arr.length === 1) {
-    //   maxParallelUploads = 1
-    // }
-
+  if (!uploadStarted) {
     uploadStarted = true;
-    upload();
+    step = 0;
+    upload(0);
   }
-
-
 }
-function upload() {
 
-
-
-  let startIndex = step * maxParallelUploads;
+function upload(startIndex) {
   let endIndex = Math.min(startIndex + maxParallelUploads, files.length);
-
-  if (endIndex - startIndex === 0) {
-    console.log('fef');
-    return
-  }
-
-  if (endIndex - startIndex === 1) {
-    endIndex = startIndex + 1;
-  }
-  if (endIndex - startIndex === 2) {
-    endIndex = startIndex + 2
-  }
 
   for (let i = startIndex; i < endIndex; i++) {
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
+
     formData.append('files', files[i]);
-    console.log(i);
+
     xhr.open('POST', 'http://localhost:3000/upload', true);
 
-
     xhr.upload.addEventListener('progress', (e) => {
-    const containerProgress = progressContainers[i]
+      const containerProgress = progressContainers[i];
 
       if (e.lengthComputable) {
         const percent = ((e.loaded / e.total) * 100).toFixed(2);
@@ -156,24 +114,26 @@ function upload() {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          console.log('ok');
         } else {
           const containerProgress = progressContainers[i];
           const containerItem = containerProgress.querySelector('.container__item');
           containerItem.classList.add('error');
-          containerItem.innerText = 'Upload Failed';
+          containerItem.innerText = 'UploadFailed';
         }
 
         fileIndex++;
-        if (fileIndex === files.length) {
-          step = 0;
-          fileIndex = 0;
+        finish++;
+
+        if (finish === files.length) {
           progressContainers = [];
-          uploadStarted = false
-          return
+          uploadStarted = false;
+          console.log('finish');
+          fileIndex = 0;
+          return;
         } else if (fileIndex === endIndex) {
           step++;
-          upload();
+          uploadStarted = true;
+          upload(endIndex);
         }
       }
     };

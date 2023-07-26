@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: #437bf5;
+    background-color: #66696f;
 }
 
 .content {
@@ -31,7 +31,7 @@ body {
 
     &__item {
         height: 100%;
-        background-color: green;
+        background-color: rgb(53, 53, 255);
         width: 0;
         margin: 50px 0;
         text-align: center;
@@ -49,7 +49,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    border: 2px dashed #437bf5;
+    border: 2px dashed #66696f;
     border-radius: 40px;
     margin: 10px 0 15px;
     padding: 30px 50px;
@@ -72,13 +72,13 @@ body {
     }
 
     &__item {
-        // opacity: 0;
+        opacity: 0;
     }
 }
 
 .upload-btn {
     font-family: 'Montserrat';
-    background-color: #437bf5;
+    background-color: #66696f;
     color: #f7fff7;
     display: flex;
     align-items: center;
@@ -91,7 +91,7 @@ body {
 }
 
 .completed {
-    background-color: #437bf5 !important;
+    background-color: green !important;
 }
 
 .error {

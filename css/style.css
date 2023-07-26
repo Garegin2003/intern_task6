@@ -3,7 +3,7 @@
   padding: 0; }
 
 body {
-  background-color: #437bf5; }
+  background-color: #66696f; }
 
 .content {
   max-width: 600px;
@@ -25,7 +25,7 @@ body {
 
 .container__item {
   height: 100%;
-  background-color: green;
+  background-color: #3535ff;
   width: 0;
   margin: 50px 0;
   text-align: center; }
@@ -38,7 +38,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border: 2px dashed #437bf5;
+  border: 2px dashed #66696f;
   border-radius: 40px;
   margin: 10px 0 15px;
   padding: 30px 50px; }
@@ -51,10 +51,12 @@ body {
     font-size: 26px;
     margin: 15px 0;
     padding: 30px; }
+  .drop-area__item {
+    opacity: 0; }
 
 .upload-btn {
   font-family: 'Montserrat';
-  background-color: #437bf5;
+  background-color: #66696f;
   color: #f7fff7;
   display: flex;
   align-items: center;
@@ -66,7 +68,7 @@ body {
   cursor: pointer; }
 
 .completed {
-  background-color: #437bf5 !important; }
+  background-color: green !important; }
 
 .error {
   color: #ff1f1f; }
