@@ -127,7 +127,6 @@ function upload(startIndex) {
         if (finish === files.length) {
           progressContainers = [];
           uploadStarted = false;
-          console.log('finish');
           fileIndex = 0;
           return;
         } else if (fileIndex === endIndex) {
