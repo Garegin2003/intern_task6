@@ -7,16 +7,14 @@ const files = [];
 const selectedFiles = [];
 
 let fileIndex = 0;
-let step = 0;
 let progressContainers = [];
 let uploadStarted = false;
-let finish = 0;
+let step = 0;
 
-uploadBtn.addEventListener('click', () => uploadFiles(input.files));
+input.addEventListener('change', handleChange);
 dropArea.addEventListener('dragover', handleDragOver);
 dropArea.addEventListener('dragleave', handleDragLeave);
 dropArea.addEventListener('drop', handleDrop);
-input.addEventListener('change', handleChange);
 
 function handleDragOver(e) {
   e.preventDefault();
@@ -32,12 +30,14 @@ function handleDrop(e) {
   e.preventDefault();
 
   dropArea.classList.remove('drag-over');
-  const filesDropped = e.dataTransfer.files || e.target.files;
-  selectedFiles.push(...filesDropped);
+  let file = e.dataTransfer.files;
+  console.log(file);
+  uploadFiles(file);
 }
 
-function handleChange(e) {
-  selectedFiles.push(...e.target.files);
+function handleChange() {
+  const file = input.files;
+  uploadFiles(file);
 }
 
 function createProgressContainer() {
@@ -58,42 +58,33 @@ function createProgressContainer() {
   return containerProgress;
 }
 
-function updateProgress(containerProgress, percent) {
-  if (containerProgress) {
-    const containerItem = containerProgress.querySelector('.container__item');
-    const containerText = containerProgress.querySelector('.container__text');
-    containerItem.style.width = percent + '%';
-    containerText.textContent = percent;
+function updateProgress(containerItem,containerText, percent) {
+ 
+  containerItem.style.width = percent + '%';
+  containerText.textContent = percent;
 
-    if (parseFloat(percent) === 100) {
-      containerItem.classList.add('completed');
-    }
+  if (parseFloat(percent) === 100) {
+    containerItem.classList.add('container__item--green');
   }
 }
 
-function uploadFiles() {
-  files.push(...selectedFiles);
+function uploadFiles(file) {
+  files.push(...file);
 
-  input.value = '';
-
-  const existingProgressContainers = document.querySelectorAll('.container__progress');
-  const numExistingContainers = existingProgressContainers.length;
-
-  for (let i = numExistingContainers; i < files.length; i++) {
+  for (let i = 0; i < file.length; i++) {
     const containerProgress = createProgressContainer();
     progressContainers.push(containerProgress);
   }
+  input.value = '';
 
   if (!uploadStarted) {
     uploadStarted = true;
-    step = 0;
-    upload(0);
+
+    upload(0, files.length - step >= 3 ? 3 : files.length - step);
   }
 }
 
-function upload(startIndex) {
-  let endIndex = Math.min(startIndex + maxParallelUploads, files.length);
-
+function upload(startIndex, endIndex) {
   for (let i = startIndex; i < endIndex; i++) {
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
@@ -102,37 +93,40 @@ function upload(startIndex) {
 
     xhr.open('POST', 'http://localhost:3000/upload', true);
 
+    const containerProgress = progressContainers[i];
+    const containerItem = containerProgress.querySelector('.container__item');
+    const containerText = containerProgress.querySelector('.container__text');
+
     xhr.upload.addEventListener('progress', (e) => {
-      const containerProgress = progressContainers[i];
 
       if (e.lengthComputable) {
         const percent = ((e.loaded / e.total) * 100).toFixed(2);
-        updateProgress(containerProgress, percent);
+        updateProgress(containerItem, containerText, percent);
       }
     });
 
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
+          step++;
+
+
         } else {
           const containerProgress = progressContainers[i];
           const containerItem = containerProgress.querySelector('.container__item');
-          containerItem.classList.add('error');
+          containerItem.classList.add('container__item--error');
           containerItem.innerText = 'UploadFailed';
         }
-
         fileIndex++;
-        finish++;
 
-        if (finish === files.length) {
+        if (step === files.length) {
           progressContainers = [];
           uploadStarted = false;
           fileIndex = 0;
           return;
         } else if (fileIndex === endIndex) {
-          step++;
           uploadStarted = true;
-          upload(endIndex);
+          upload(endIndex, files.length - step >= 3 ? endIndex + 3 : endIndex + files.length - step);
         }
       }
     };

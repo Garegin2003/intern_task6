@@ -29,6 +29,10 @@ body {
   width: 0;
   margin: 50px 0;
   text-align: center; }
+  .container__item--green {
+    background-color: green !important; }
+  .container__item--error {
+    color: #ff1f1f; }
 
 .container__text {
   color: #f7fff7; }
@@ -53,22 +57,3 @@ body {
     padding: 30px; }
   .drop-area__item {
     opacity: 0; }
-
-.upload-btn {
-  font-family: 'Montserrat';
-  background-color: #66696f;
-  color: #f7fff7;
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  border: none;
-  border-radius: 20px;
-  margin: 10px;
-  padding: 7.5px 50px;
-  cursor: pointer; }
-
-.completed {
-  background-color: green !important; }
-
-.error {
-  color: #ff1f1f; }
