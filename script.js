@@ -109,8 +109,6 @@ function upload(startIndex, endIndex) {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           step++;
-
-
         } else {
           const containerProgress = progressContainers[i];
           const containerItem = containerProgress.querySelector('.container__item');
