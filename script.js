@@ -4,7 +4,6 @@ const input = document.querySelector('.drop-area__item');
 const dropArea = document.querySelector('.drop-area');
 const maxParallelUploads = 3;
 const files = [];
-const selectedFiles = [];
 
 let fileIndex = 0;
 let progressContainers = [];
