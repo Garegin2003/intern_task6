@@ -79,7 +79,7 @@ function uploadFiles(file) {
   if (!uploadStarted) {
     uploadStarted = true;
 
-    upload(0, files.length - step >= 3 ? 3 : files.length - step);
+    upload(0, files.length - step >= maxParallelUploads ? maxParallelUploads : files.length - step);
   }
 }
 
@@ -123,7 +123,7 @@ function upload(startIndex, endIndex) {
           return;
         } else if (fileIndex === endIndex) {
           uploadStarted = true;
-          upload(endIndex, files.length - step >= 3 ? endIndex + 3 : endIndex + files.length - step);
+          upload(endIndex, files.length - step >= maxParallelUploads ? endIndex + maxParallelUploads : endIndex + files.length - step);
         }
       }
     };
