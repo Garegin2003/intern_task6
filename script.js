@@ -1,9 +1,11 @@
+const files = [];
+const SERVER = 'http://localhost:3000/upload'
+const maxParallelUploads = 3;
 const uploadBtn = document.querySelector('.upload-btn');
 const progress = document.querySelector('.container');
 const input = document.querySelector('.drop-area__item');
 const dropArea = document.querySelector('.drop-area');
-const maxParallelUploads = 3;
-const files = [];
+
 
 let fileIndex = 0;
 let progressContainers = [];
@@ -90,7 +92,7 @@ function upload(startIndex, endIndex) {
 
     formData.append('files', files[i]);
 
-    xhr.open('POST', 'http://localhost:3000/upload', true);
+    xhr.open('POST', SERVER);
 
     const containerProgress = progressContainers[i];
     const containerItem = containerProgress.querySelector('.container__item');
