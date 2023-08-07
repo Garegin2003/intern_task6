@@ -6,7 +6,6 @@ const progress = document.querySelector('.container');
 const input = document.querySelector('.drop-area__item');
 const dropArea = document.querySelector('.drop-area');
 
-
 let fileIndex = 0;
 let progressContainers = [];
 let uploadStarted = false;
@@ -31,13 +30,13 @@ function handleDrop(e) {
   e.preventDefault();
 
   dropArea.classList.remove('drag-over');
-  let file = e.dataTransfer.files;
-  console.log(file);
+
+  const file = [...e.dataTransfer.files].filter(e => e.type !== '' && e.type !== 'text/javascript');
   uploadFiles(file);
 }
 
 function handleChange() {
-  const file = input.files;
+  const file = [...input.files].filter(e => e.type !== '' && e.type !== 'text/javascript');
   uploadFiles(file);
 }
 
@@ -76,11 +75,11 @@ function uploadFiles(file) {
     const containerProgress = createProgressContainer();
     progressContainers.push(containerProgress);
   }
+
   input.value = '';
 
   if (!uploadStarted) {
     uploadStarted = true;
-
     upload(0, files.length - step >= maxParallelUploads ? maxParallelUploads : files.length - step);
   }
 }
@@ -109,7 +108,6 @@ function upload(startIndex, endIndex) {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          step++;
         } else {
           const containerProgress = progressContainers[i];
           const containerItem = containerProgress.querySelector('.container__item');
@@ -117,7 +115,7 @@ function upload(startIndex, endIndex) {
           containerItem.innerText = 'UploadFailed';
         }
         fileIndex++;
-
+        step++;
         if (step === files.length) {
           progressContainers = [];
           uploadStarted = false;
