@@ -5,16 +5,17 @@ const uploadBtn = document.querySelector('.upload-btn');
 const progress = document.querySelector('.container');
 const input = document.querySelector('.drop-area__item');
 const dropArea = document.querySelector('.drop-area');
+const filteredFiles = ["", "text/javascript"]
 
-let fileIndex = 0;
 let progressContainers = [];
 let uploadStarted = false;
 let step = 0;
+let fileIndex = 0
 
-input.addEventListener('change', handleChange);
+input.addEventListener('change', handleUpload);
 dropArea.addEventListener('dragover', handleDragOver);
 dropArea.addEventListener('dragleave', handleDragLeave);
-dropArea.addEventListener('drop', handleDrop);
+dropArea.addEventListener('drop', handleUpload);
 
 function handleDragOver(e) {
   e.preventDefault();
@@ -26,17 +27,12 @@ function handleDragLeave(e) {
   dropArea.classList.remove('drag-over');
 }
 
-function handleDrop(e) {
+function handleUpload(e) {
   e.preventDefault();
 
   dropArea.classList.remove('drag-over');
 
-  const file = [...e.dataTransfer.files].filter(e => e.type !== '' && e.type !== 'text/javascript');
-  uploadFiles(file);
-}
-
-function handleChange() {
-  const file = [...input.files].filter(e => e.type !== '' && e.type !== 'text/javascript');
+  const file = e.target.files || e.dataTransfer.files;
   uploadFiles(file);
 }
 
@@ -55,32 +51,39 @@ function createProgressContainer() {
   containerProgress.appendChild(containerItem);
   progress.appendChild(containerProgress);
 
-  return containerProgress;
+  progressContainers.push({
+    containerItem,
+    containerText: span
+  })
 }
 
-function updateProgress(containerItem,containerText, percent) {
- 
-  containerItem.style.width = percent + '%';
-  containerText.textContent = percent;
+function updateProgress(containerItem, containerText, percent) {
 
-  if (parseFloat(percent) === 100) {
+  containerItem.style.width = percent + '%';
+  containerText.textContent = percent.toFixed(2);
+
+  if (percent === 100) {
     containerItem.classList.add('container__item--green');
   }
 }
 
+const diff = (endIndex = 0) => {
+  return files.length - step >= maxParallelUploads ? endIndex + maxParallelUploads : endIndex + files.length - step
+}
+
 function uploadFiles(file) {
+  file = Array.from(file).filter(e => !filteredFiles.includes(e.type))
   files.push(...file);
 
   for (let i = 0; i < file.length; i++) {
-    const containerProgress = createProgressContainer();
-    progressContainers.push(containerProgress);
+    createProgressContainer();
   }
 
   input.value = '';
 
   if (!uploadStarted) {
     uploadStarted = true;
-    upload(0, files.length - step >= maxParallelUploads ? maxParallelUploads : files.length - step);
+    upload(0, diff());
   }
 }
 
@@ -93,14 +96,12 @@ function upload(startIndex, endIndex) {
 
     xhr.open('POST', SERVER);
 
-    const containerProgress = progressContainers[i];
-    const containerItem = containerProgress.querySelector('.container__item');
-    const containerText = containerProgress.querySelector('.container__text');
+    const { containerItem, containerText } = progressContainers[i];
 
     xhr.upload.addEventListener('progress', (e) => {
 
       if (e.lengthComputable) {
-        const percent = ((e.loaded / e.total) * 100).toFixed(2);
+        const percent = ((e.loaded / e.total) * 100)
         updateProgress(containerItem, containerText, percent);
       }
     });
@@ -109,10 +110,9 @@ function upload(startIndex, endIndex) {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
         } else {
-          const containerProgress = progressContainers[i];
-          const containerItem = containerProgress.querySelector('.container__item');
+          const {containerItem} = progressContainers[i];
           containerItem.classList.add('container__item--error');
-          containerItem.innerText = 'UploadFailed';
+          containerItem.innerText = `UploadFailed ${xhr.status}`;
         }
         fileIndex++;
         step++;
@@ -123,7 +123,7 @@ function upload(startIndex, endIndex) {
           return;
         } else if (fileIndex === endIndex) {
           uploadStarted = true;
-          upload(endIndex, files.length - step >= maxParallelUploads ? endIndex + maxParallelUploads : endIndex + files.length - step);
+          upload(endIndex, diff(endIndex));
         }
       }
     };
